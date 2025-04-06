@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Player</title>
+  <link rel="stylesheet" href="style1.css"/>
+  <script src="https://kit.fontawesome.com/f9b341fec1.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="music-player">
+      <nav>
+        <div class="circle"><i class="fa-solid fa-angle-left"></i></div>
+        <div class="circle"><i class="fa-solid fa-bars"></i></div>
+      </nav>
+
+      <img src="images/sddefault.jpg" class="song-img" id="song-img" />
+      <h1>I-Wanna-Be-Yours</h1>
+      <p>Artic Monkey</p>
+
+      <audio id="song">
+        <source src="images/I-Wanna-Be-Yours.mp3" type="audio/mpeg" />
+      </audio>
+
+      <input type="range" value="0" id="progress" />
+      <div class="time">
+        <span id="current-time">0:00</span>
+        <span id="duration">0:00</span>
+      </div>
+
+      <div class="controls">
+        <div id="backward"><i class="fa-solid fa-backward"></i></div>
+        <div onclick="playPause()"><i class="fa-solid fa-play" id="ctrlIcon"></i></div>
+        <div id="forward"><i class="fa-solid fa-forward"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const song = document.getElementById("song");
+    const progress = document.getElementById("progress");
+    const ctrlIcon = document.getElementById("ctrlIcon");
+    const currentTimeEl = document.getElementById("current-time");
+    const durationEl = document.getElementById("duration");
+    const img = document.getElementById("song-img");
+  
+    song.onloadedmetadata = () => {
+      progress.max = song.duration;
+      durationEl.textContent = formatTime(song.duration);
+    }
+  
+    song.ontimeupdate = () => {
+      progress.value = song.currentTime;
+      currentTimeEl.textContent = formatTime(song.currentTime);
+    }
+  
+    progress.oninput = () => {
+      song.currentTime = progress.value;
+      currentTimeEl.textContent = formatTime(song.currentTime);
+    }
+  
+    function playPause() {
+      if (song.paused) {
+        song.play();
+        ctrlIcon.classList.remove("fa-play");
+        ctrlIcon.classList.add("fa-pause");
+        img.classList.add("beat");
+      } else {
+        song.pause();
+        ctrlIcon.classList.remove("fa-pause");
+        ctrlIcon.classList.add("fa-play");
+        img.classList.remove("beat");
+      }
+    }
+  
+    function formatTime(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+      return `${minutes}:${seconds}`;
+    }
+    song.onended = () => {
+    ctrlIcon.classList.remove("fa-pause");
+    ctrlIcon.classList.add("fa-play");
+    img.classList.remove("beat");
+    progress.value = 0;
+    currentTimeEl.textContent = "0:00"; 
+    }
+    document.getElementById("forward").onclick = () => {
+      song.currentTime = Math.min(song.currentTime + 10, song.duration);
+    }
+  
+    document.getElementById("backward").onclick = () => {
+      song.currentTime = Math.max(song.currentTime - 10, 0);
+    }
+  
+  </script>
+  
+
+</body>
+</html>
